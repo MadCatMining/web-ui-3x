@@ -792,7 +792,7 @@ install_x-ui() {
         
         url="https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz"
         echo -e "Beginning to install x-ui $1"
-        curl -4fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
+        curl --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
         if [[ $? -ne 0 ]]; then
             echo -e "${red}Download x-ui $1 failed, please check if the version exists ${plain}"
             exit 1
