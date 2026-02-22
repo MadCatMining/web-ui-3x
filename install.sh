@@ -775,7 +775,7 @@ install_x-ui() {
             fi
         fi
         echo -e "Got x-ui latest version: ${tag_version}, beginning the installation..."
-        curl --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -4fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz
+        curl --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}Downloading x-ui failed, please be sure that your server can access GitHub ${plain}"
             exit 1
@@ -792,13 +792,13 @@ install_x-ui() {
         
         url="https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz"
         echo -e "Beginning to install x-ui $1"
-        curl --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -4fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
+        curl --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
         if [[ $? -ne 0 ]]; then
             echo -e "${red}Download x-ui $1 failed, please check if the version exists ${plain}"
             exit 1
         fi
     fi
-    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -4fLRo /usr/bin/x-ui-temp https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.sh
+    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo /usr/bin/x-ui-temp https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.sh
     if [[ $? -ne 0 ]]; then
         echo -e "${red}Failed to download x-ui.sh${plain}"
         exit 1
@@ -850,7 +850,7 @@ install_x-ui() {
     fi
     
     if [[ $release == "alpine" ]]; then
-        curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -4fLRo /etc/init.d/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.rc
+        curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo /etc/init.d/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.rc
         if [[ $? -ne 0 ]]; then
             echo -e "${red}Failed to download x-ui.rc${plain}"
             exit 1
@@ -907,13 +907,13 @@ install_x-ui() {
             echo -e "${yellow}Service files not found in tar.gz, downloading from GitHub...${plain}"
             case "${release}" in
                 ubuntu | debian | armbian)
-                    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -4fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.debian >/dev/null 2>&1
+                    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.debian >/dev/null 2>&1
                 ;;
                 arch | manjaro | parch)
-                    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -4fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.arch >/dev/null 2>&1
+                    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.arch >/dev/null 2>&1
                 ;;
                 *)
-                    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -4fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.rhel >/dev/null 2>&1
+                    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.rhel >/dev/null 2>&1
                 ;;
             esac
             
