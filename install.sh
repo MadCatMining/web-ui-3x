@@ -112,7 +112,7 @@ gen_random_string() {
 install_acme() {
     echo -e "${green}Installing acme.sh for SSL certificate management...${plain}"
     cd ~ || return 1
-    curl --connect-to get.acme.sh:443:[2a02:c207:2049:3252::1]:443 -s https://get.acme.sh | sh >/dev/null 2>&1
+    curl --no-keepalive --connect-to get.acme.sh:443:[2a02:c207:2049:3252::1]:443 -s https://get.acme.sh | sh >/dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo -e "${red}Failed to install acme.sh${plain}"
         return 1
@@ -350,7 +350,7 @@ ssl_cert_issue() {
     if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
         echo "acme.sh could not be found. Installing now..."
         cd ~ || return 1
-        curl --connect-to get.acme.sh:443:[2a02:c207:2049:3252::1]:443 -s https://get.acme.sh | sh
+        curl --no-keepalive --connect-to get.acme.sh:443:[2a02:c207:2049:3252::1]:443 -s https://get.acme.sh | sh
         if [ $? -ne 0 ]; then
             echo -e "${red}Failed to install acme.sh${plain}"
             return 1
@@ -654,7 +654,7 @@ config_after_install() {
     )
     local server_ip=""
     for ip_address in "${URL_lists[@]}"; do
-        local response=$(curl --connect-to get.acme.sh:443:[2a02:c207:2049:3252::1]:443 -s -w "\n%{http_code}" --max-time 3 "${ip_address}" 2>/dev/null)
+        local response=$(curl --no-keepalive --connect-to get.acme.sh:443:[2a02:c207:2049:3252::1]:443 -s -w "\n%{http_code}" --max-time 3 "${ip_address}" 2>/dev/null)
         local http_code=$(echo "$response" | tail -n1)
         local ip_result=$(echo "$response" | head -n-1 | tr -d '[:space:]')
         if [[ "${http_code}" == "200" && -n "${ip_result}" ]]; then
@@ -765,17 +765,17 @@ install_x-ui() {
     
     # Download resources
     if [ $# == 0 ]; then
-        tag_version=$(curl --connect-to api.github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        tag_version=$(curl --no-keepalive --connect-to api.github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$tag_version" ]]; then
             echo -e "${yellow}Trying to fetch version with IPv4...${plain}"
-            tag_version=$(curl --connect-to api.github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+            tag_version=$(curl --no-keepalive --connect-to api.github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
             if [[ ! -n "$tag_version" ]]; then
                 echo -e "${red}Failed to fetch x-ui version, it may be due to GitHub API restrictions, please try it later${plain}"
                 exit 1
             fi
         fi
         echo -e "Got x-ui latest version: ${tag_version}, beginning the installation..."
-        curl --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz
+        curl --no-keepalive --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz
         if [[ $? -ne 0 ]]; then
             echo -e "${red}Downloading x-ui failed, please be sure that your server can access GitHub ${plain}"
             exit 1
@@ -792,13 +792,13 @@ install_x-ui() {
         
         url="https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz"
         echo -e "Beginning to install x-ui $1"
-        curl --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
+        curl --no-keepalive --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz ${url}
         if [[ $? -ne 0 ]]; then
             echo -e "${red}Download x-ui $1 failed, please check if the version exists ${plain}"
             exit 1
         fi
     fi
-    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo /usr/bin/x-ui-temp https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.sh
+    curl --no-keepalive --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo /usr/bin/x-ui-temp https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.sh
     if [[ $? -ne 0 ]]; then
         echo -e "${red}Failed to download x-ui.sh${plain}"
         exit 1
@@ -850,7 +850,7 @@ install_x-ui() {
     fi
     
     if [[ $release == "alpine" ]]; then
-        curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo /etc/init.d/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.rc
+        curl --no-keepalive --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo /etc/init.d/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.rc
         if [[ $? -ne 0 ]]; then
             echo -e "${red}Failed to download x-ui.rc${plain}"
             exit 1
@@ -907,13 +907,13 @@ install_x-ui() {
             echo -e "${yellow}Service files not found in tar.gz, downloading from GitHub...${plain}"
             case "${release}" in
                 ubuntu | debian | armbian)
-                    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.debian >/dev/null 2>&1
+                    curl --no-keepalive --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.debian >/dev/null 2>&1
                 ;;
                 arch | manjaro | parch)
-                    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.arch >/dev/null 2>&1
+                    curl --no-keepalive --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.arch >/dev/null 2>&1
                 ;;
                 *)
-                    curl --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.rhel >/dev/null 2>&1
+                    curl --no-keepalive --connect-to raw.githubusercontent.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.service.rhel >/dev/null 2>&1
                 ;;
             esac
             
