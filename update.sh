@@ -138,7 +138,7 @@ install_base() {
 install_acme() {
     echo -e "${green}Installing acme.sh for SSL certificate management...${plain}"
     cd ~ || return 1
-    curl -s https://get.acme.sh | sh >/dev/null 2>&1
+    curl --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -s https://get.acme.sh | sh >/dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo -e "${red}Failed to install acme.sh${plain}"
         return 1
@@ -373,7 +373,7 @@ ssl_cert_issue() {
     if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
         echo "acme.sh could not be found. Installing now..."
         cd ~ || return 1
-        curl -s https://get.acme.sh | sh
+        curl --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -s https://get.acme.sh | sh
         if [ $? -ne 0 ]; then
             echo -e "${red}Failed to install acme.sh${plain}"
             return 1
@@ -687,7 +687,7 @@ config_after_update() {
     )
     local server_ip=""
     for ip_address in "${URL_lists[@]}"; do
-        local response=$(curl -s -w "\n%{http_code}" --max-time 3 "${ip_address}" 2>/dev/null)
+        local response=$(curl --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -s -w "\n%{http_code}" --max-time 3 "${ip_address}" 2>/dev/null)
         local http_code=$(echo "$response" | tail -n1)
         local ip_result=$(echo "$response" | head -n-1 | tr -d '[:space:]')
         if [[ "${http_code}" == "200" && -n "${ip_result}" ]]; then
@@ -756,19 +756,19 @@ update_x-ui() {
     
     echo -e "${green}Downloading new x-ui version...${plain}"
     
-    tag_version=$(${curl_bin} --connect-to api.github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    tag_version=$(${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     if [[ ! -n "$tag_version" ]]; then
         echo -e "${yellow}Trying to fetch version with IPv4...${plain}"
-        tag_version=$(${curl_bin} --connect-to api.github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        tag_version=$(${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$tag_version" ]]; then
             _fail "ERROR: Failed to fetch x-ui version, it may be due to GitHub API restrictions, please try it later"
         fi
     fi
     echo -e "Got x-ui latest version: ${tag_version}, beginning the installation..."
-    ${curl_bin} --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz 2>/dev/null
+    ${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz 2>/dev/null
     if [[ $? -ne 0 ]]; then
         echo -e "${yellow}Trying to fetch version with IPv4...${plain}"
-        ${curl_bin} --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz 2>/dev/null
+        ${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz 2>/dev/null
         if [[ $? -ne 0 ]]; then
             _fail "ERROR: Failed to download x-ui, please be sure that your server can access GitHub"
         fi
@@ -831,10 +831,10 @@ update_x-ui() {
     chmod +x x-ui bin/xray-linux-$(arch) >/dev/null 2>&1
     
     echo -e "${green}Downloading and installing x-ui.sh script...${plain}"
-    ${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -fLRo /usr/bin/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.sh >/dev/null 2>&1
+    ${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -fLRo /usr/bin/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.sh >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
         echo -e "${yellow}Trying to fetch x-ui with IPv4...${plain}"
-        ${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -6fLRo /usr/bin/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.sh >/dev/null 2>&1
+        ${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -6fLRo /usr/bin/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.sh >/dev/null 2>&1
         if [[ $? -ne 0 ]]; then
             _fail "ERROR: Failed to download x-ui.sh script, please be sure that your server can access GitHub"
         fi
@@ -854,9 +854,9 @@ update_x-ui() {
     
     if [[ $release == "alpine" ]]; then
         echo -e "${green}Downloading and installing startup unit x-ui.rc...${plain}"
-        ${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -fLRo /etc/init.d/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.rc >/dev/null 2>&1
+        ${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -fLRo /etc/init.d/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.rc >/dev/null 2>&1
         if [[ $? -ne 0 ]]; then
-            ${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -6fLRo /etc/init.d/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.rc >/dev/null 2>&1
+            ${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -fLRo /etc/init.d/x-ui https://raw.githubusercontent.com/MadCatMining/web-ui-3x/main/x-ui.rc >/dev/null 2>&1
             if [[ $? -ne 0 ]]; then
                 _fail "ERROR: Failed to download startup unit x-ui.rc, please be sure that your server can access GitHub"
             fi
@@ -910,13 +910,13 @@ update_x-ui() {
                 echo -e "${yellow}Service files not found in tar.gz, downloading from GitHub...${plain}"
                 case "${release}" in
                     ubuntu | debian | armbian)
-                        ${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -6fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MHSanaei/MadCatMining/web-ui-3x/x-ui.service.debian >/dev/null 2>&1
+                        ${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MHSanaei/MadCatMining/web-ui-3x/x-ui.service.debian >/dev/null 2>&1
                     ;;
                     arch | manjaro | parch)
-                        ${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -6fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MHSanaei/MadCatMining/web-ui-3x/x-ui.service.arch >/dev/null 2>&1
+                        ${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MHSanaei/MadCatMining/web-ui-3x/x-ui.service.arch >/dev/null 2>&1
                     ;;
                     *)
-                        ${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -6fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MHSanaei/MadCatMining/web-ui-3x/x-ui.service.rhel >/dev/null 2>&1
+                        ${curl_bin} --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -fLRo ${xui_service}/x-ui.service https://raw.githubusercontent.com/MHSanaei/MadCatMining/web-ui-3x/x-ui.service.rhel >/dev/null 2>&1
                     ;;
                 esac
                 
