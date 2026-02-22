@@ -112,7 +112,7 @@ gen_random_string() {
 install_acme() {
     echo -e "${green}Installing acme.sh for SSL certificate management...${plain}"
     cd ~ || return 1
-    curl --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -s https://get.acme.sh | sh >/dev/null 2>&1
+    curl -s https://get.acme.sh | sh >/dev/null 2>&1
     if [ $? -ne 0 ]; then
         echo -e "${red}Failed to install acme.sh${plain}"
         return 1
@@ -350,7 +350,7 @@ ssl_cert_issue() {
     if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
         echo "acme.sh could not be found. Installing now..."
         cd ~ || return 1
-        curl --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -s https://get.acme.sh | sh
+        curl -s https://get.acme.sh | sh
         if [ $? -ne 0 ]; then
             echo -e "${red}Failed to install acme.sh${plain}"
             return 1
@@ -654,7 +654,7 @@ config_after_install() {
     )
     local server_ip=""
     for ip_address in "${URL_lists[@]}"; do
-        local response=$(curl --ipv6 --proxy http://[2a02:c207:2049:3252::1]:3128 -s -w "\n%{http_code}" --max-time 3 "${ip_address}" 2>/dev/null)
+        local response=$(curl -s -w "\n%{http_code}" --max-time 3 "${ip_address}" 2>/dev/null)
         local http_code=$(echo "$response" | tail -n1)
         local ip_result=$(echo "$response" | head -n-1 | tr -d '[:space:]')
         if [[ "${http_code}" == "200" && -n "${ip_result}" ]]; then
