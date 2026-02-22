@@ -756,10 +756,10 @@ update_x-ui() {
     
     echo -e "${green}Downloading new x-ui version...${plain}"
     
-    tag_version=$(${curl_bin} --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    tag_version=$(${curl_bin} --connect-to api.github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     if [[ ! -n "$tag_version" ]]; then
         echo -e "${yellow}Trying to fetch version with IPv4...${plain}"
-        tag_version=$(${curl_bin} --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        tag_version=$(${curl_bin} --connect-to api.github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$tag_version" ]]; then
             _fail "ERROR: Failed to fetch x-ui version, it may be due to GitHub API restrictions, please try it later"
         fi
