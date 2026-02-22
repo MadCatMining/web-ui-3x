@@ -756,19 +756,19 @@ update_x-ui() {
     
     echo -e "${green}Downloading new x-ui version...${plain}"
     
-    tag_version=$(${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    tag_version=$(${curl_bin} --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" 2>/dev/null | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
     if [[ ! -n "$tag_version" ]]; then
         echo -e "${yellow}Trying to fetch version with IPv4...${plain}"
-        tag_version=$(${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -6 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        tag_version=$(${curl_bin} --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -Ls "https://api.github.com/repos/MadCatMining/web-ui-3x/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         if [[ ! -n "$tag_version" ]]; then
             _fail "ERROR: Failed to fetch x-ui version, it may be due to GitHub API restrictions, please try it later"
         fi
     fi
     echo -e "Got x-ui latest version: ${tag_version}, beginning the installation..."
-    ${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz 2>/dev/null
+    ${curl_bin} --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz 2>/dev/null
     if [[ $? -ne 0 ]]; then
         echo -e "${yellow}Trying to fetch version with IPv4...${plain}"
-        ${curl_bin} --ipv6 --proxy [2a02:c207:2049:3252::1]:443 -6fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/x-ui-linux-$(arch).tar.gz 2>/dev/null
+        ${curl_bin} --connect-to github.com:443:[2a02:c207:2049:3252::1]:443 -fLRo ${xui_folder}-linux-$(arch).tar.gz https://github.com/MadCatMining/web-ui-3x/releases/download/${tag_version}/web-ui-linux-$(arch).tar.gz 2>/dev/null
         if [[ $? -ne 0 ]]; then
             _fail "ERROR: Failed to download x-ui, please be sure that your server can access GitHub"
         fi
